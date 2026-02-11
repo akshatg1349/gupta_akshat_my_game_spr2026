@@ -1,3 +1,6 @@
+#pygame is being imported as pg
+import pygame as pg
+
 #settng up pygame
 WIDTH = 800
 HEIGHT = 600
@@ -6,7 +9,8 @@ FPS = 60
 TILESIZE = 32
 
 #player values
-PLAYER_SPEED = 30
+PLAYER_SPEED = 280
+PLAYER_HIT_RECT = pg.Rect(0,0,TILESIZE,TILESIZE)
 
 #Color values
 #tuple storing RGB values
