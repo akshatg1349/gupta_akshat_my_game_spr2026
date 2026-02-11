@@ -6,6 +6,10 @@ from settings import *
 #vec is given a specific value pg.math.Vector2
 vec = pg.math.Vector2
 
+#defining a function where two items are colliding
+def collide_hit_rect(one, two):
+    return one.hit_rect.colliderect(two.rect)
+
 #a class Player with the argument Sprite
 class Player(Sprite):
     #the arguments here are self, game, x, and y
@@ -20,8 +24,7 @@ class Player(Sprite):
         self.vel = vec(0,0)
         #the position of the sprite is (x,y) times tile size
         self.pos = vec(x,y) * TILESIZE
-    #the player's position is being updated
-    #it is moving to the right by 1 pixel every time
+        self.hit_rect = PLAYER_HIT_RECT
 
     #defining a function called get_keys
     def get_keys(self):
