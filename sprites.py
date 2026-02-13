@@ -9,6 +9,39 @@ vec = pg.math.Vector2
 #defining a function where two items are colliding
 def collide_hit_rect(one, two):
     return one.hit_rect.colliderect(two.rect)
+#this function checks for x and y collision in sequence and sets the position based on collision direction
+def collide_with_walls(sprite, group, dir):
+    if dir == 'x':
+        #a variable hits is declared to say how many hits a sprite went through
+        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        if hits:
+            #if hits[0].rect.centerx is greater than sprite.hit_rect.centerx
+            if hits[0].rect.centerx > sprite.hit_rect.centerx:
+                '''then we set the x position of the sprite to hits[0].rect.left minus
+                sprite.hit_rect.width / 2
+                '''
+                sprite.pos.x = hits[0].rect.left - sprite.hit_rect.width / 2
+                if hits[0].rect.centerx < sprite.hit_rect.centerx:
+                    #the collision happens in the right
+                    sprite.pos.x = hits[0].rect.right + sprite.hit_rect.width / 2
+                sprite.vel.x = 0
+                sprite.hit_rect.centerx = sprite.pos.x
+    if dir == 'y':
+        #a variable hits is declared to say how many hits a sprite went through
+        hits = pg.sprite.spritecollide(sprite, group, False, collide_hit_rect)
+        if hits:
+            print("collided with wall from y dir")
+            #ifhits[0].rect.centery is greater than sprite.hit_rect.centerx
+            if hits[0].rect.centery > sprite.hit_rect.centery:
+                '''then we set the y position of the sprite to hits[0].rect.top minus
+            sprite.hit_rect.width / 2
+            '''
+                sprite.pos.y = hits[0].rect.top - sprite.hit_rect.height / 2
+            if hits[0].rect.centery < sprite.hit_rect.centery:
+                #the collision happens in the bottom
+                sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
+            sprite.vel.y = 0
+            sprite.hit_rect.centery = sprite.pos.y
 
 #a class Player with the argument Sprite
 class Player(Sprite):
@@ -25,6 +58,7 @@ class Player(Sprite):
         #the position of the sprite is (x,y) times tile size
         self.pos = vec(x,y) * TILESIZE
         self.hit_rect = PLAYER_HIT_RECT
+
 
     #defining a function called get_keys
     def get_keys(self):
@@ -48,6 +82,11 @@ class Player(Sprite):
         self.get_keys()
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
+        self.hit_rect.centerx = self.pos.x
+        collide_with_walls(self, self.game.all_walls, 'x')
+        self.hit_rect.centery = self.pos.y
+        collide_with_walls(self, self.game.all_walls, 'y')
+        self.rect.centerx - self.hit_rect.centery
 #the class Mob is created
 class Mob(Sprite):
     #__init__ function is defined
@@ -61,14 +100,22 @@ class Mob(Sprite):
         self.rect = self.image.get_rect()
         self.vel = vec(1,0)
         self.pos = vec(x,y) * TILESIZE
-        #the speed is set to 5
-        self.speed = 5
+        #the speed is set to 10
+        self.speed = 10
     #update function is defined
     def update(self):
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         if hits:
             print("collided")
-        
+            #the speed is subtracted by 1
+            self.speed -= 1
+
+        if self.rect.x > WIDTH or self.rect.x < 0:
+            self.speed *= -1
+            self.pos.y += TILESIZE
+            self.pos += self.speed * self.vel
+            self.rect.center = self.pos
+
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
             self.pos.y += TILESIZE
@@ -90,6 +137,7 @@ class Coin(Sprite):
         self.vel = vec(0,0)
         #its position is based on x and y positions and tile size
         self.pos = vec(x,y) * TILESIZE
+        self.rect.center = self.pos
     #update function is defined with parameter self
     def update(self):
         pass
