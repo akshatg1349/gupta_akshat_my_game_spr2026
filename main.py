@@ -38,10 +38,11 @@ class Game:
     #load_data is defined
     def load_data(self):
         self.game_dir = path.dirname(__file__)
-        #a map is being created
+        self.img_dir = path.join(self.game_dir, 'images')
+        self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art.png')).convert_alpha()
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         print('data is loaded')
-
+        
     #function 'new' is defined
     def new(self):
         #the dad is being loaded
@@ -51,6 +52,7 @@ class Game:
         self.all_walls = pg.sprite.Group()
         self.all_coins = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
+        self.player_group = pg.sprite.Group()
         #A player, mob, and coin are being added on the screen
         #self.player = Player(self, 15, 15)
         #self.mob = Mob(self, 4, 4)
