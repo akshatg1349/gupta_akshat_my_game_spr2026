@@ -47,7 +47,7 @@ def collide_with_walls(sprite, group, dir):
 class Player(Sprite):
     #the arguments here are self, game, x, and y
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites
+        self.groups = game.all_sprites, game.player_group
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
@@ -104,6 +104,7 @@ class Mob(Sprite):
         self.speed = 10
     #update function is defined
     def update(self):
+
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         if hits:
             print("collided")
@@ -121,6 +122,9 @@ class Mob(Sprite):
             self.pos.y += TILESIZE
         self.pos += self.speed * self.vel
         self.rect.center = self.pos
+
+        if self.pos.y >= HEIGHT:
+            print("You Win!")
 #class Coin is being created
 class Coin(Sprite):
     # function __init__ is defined with parameters self, game, x, and y
@@ -150,10 +154,11 @@ class Wall(Sprite):
         Sprite.__init__(self, self.groups)
         #self.game is set to game
         self.game = game
+        self.image = game.wall_img
         #self.image is based on tile size
-        self.image = pg.Surface((TILESIZE, TILESIZE))
+        #self.image = pg.Surface((TILESIZE, TILESIZE))
         #The wall color is green
-        self.image.fill(GREEN)
+        #self.image.fill(GREEN)
         self.rect = self.image.get_rect()
         #the velocity is set to vec(0,0)
         self.vel = vec(0,0)
