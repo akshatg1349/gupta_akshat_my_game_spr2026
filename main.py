@@ -53,6 +53,7 @@ class Game:
         self.all_coins = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
         self.player_group = pg.sprite.Group()
+        self.all_projectiles = pg.sprite.Group()
         #A player, mob, and coin are being added on the screen
         #self.player = Player(self, 15, 15)
         #self.mob = Mob(self, 4, 4)
@@ -101,7 +102,7 @@ class Game:
                     print("i can determine when keys are pressed")
             if event.type == pg.KEYUP:
                 if event.key == pg.K_k:
-                    #keys are being relased
+                    #keys are being released
                     print("i can determine when keys are released")
             # if event.type == pg.KEYDOWN:
             #     if event.key == pg.K_w:
@@ -122,6 +123,7 @@ class Game:
     #function update is created
     def update(self):
         self.all_sprites.update()
+        print(len(self.all_projectiles))
 
     def draw(self):
         #the screen becomes blue
