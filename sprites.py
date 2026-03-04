@@ -151,7 +151,7 @@ class Player(Sprite):
 class Mob(Sprite):
     #__init__ function is defined
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.all_sprites
+        self.groups = game.all_sprites, game.all_mobs
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
