@@ -126,7 +126,7 @@ class Game:
         print(len(self.all_projectiles))
 
     def draw(self):
-        #the screen becomes blue
+        #the screen becomes blued
         self.screen.fill(BLUE)
         #The Hello World text is printed
         self.draw_text("Hello World", 24, WHITE, WIDTH/2, TILESIZE)
