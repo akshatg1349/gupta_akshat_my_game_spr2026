@@ -9,8 +9,8 @@ FPS = 60
 TILESIZE = 32
 
 #player values
-PLAYER_SPEED = 280
-PLAYER_HIT_RECT = pg.Rect(0,0,TILESIZE-5,TILESIZE-5)
+PLAYER_SPEED = 200
+PLAYER_HIT_RECT = pg.Rect(0,0,TILESIZE,TILESIZE)
 
 #Color values
 #tuple storing RGB values

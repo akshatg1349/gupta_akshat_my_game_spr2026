@@ -1,9 +1,12 @@
+from ctypes import Array
+
 #importing pygame, Sprite, and path
 import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
 from utils import *
 from os import path
+from state_machine import *
 
 #vec is given a specific value pg.math.Vector2
 vec = pg.math.Vector2
@@ -45,7 +48,52 @@ def collide_with_walls(sprite, group, dir):
                 sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
+from state_machine import *
+from settings import *
 
+class PlayerIdleState(State):
+    def __init__(self, player):
+        self.player = player
+        self.name = "idle"
+
+    def get_state_name(self):
+        return "idle"
+
+    def enter(self):
+        self.player.image.fill(WHITE)
+        print('enter player idle state')
+
+    def exit(self):
+        print('exit player idle state')
+
+    def update(self):
+        # print('updating player idle state...')
+        self.player.image.fill(WHITE)
+        keys = pg.key.get_pressed()
+        if keys[pg.K_k]:
+            print('transitioning to attack state...')
+            self.player.state_machine.transition("attack")
+            
+class PlayerMoveState(State):
+    def __init__(self, player):
+        self.player = player
+        self.name = "move"
+
+    def get_state_name(self):
+        return "move"
+
+    def enter(self):
+        self.player.image.fill(WHITE)
+        print('enter player move state')
+
+    def exit(self):
+        print('exit player move state')
+
+    def update(self):
+        # print('updating player move state...')
+        self.player.image.fill(GREEN)
+        keys = pg.key.get_pressed()
+  
 #a class Player with the argument Sprite
 class Player(Sprite):
     #the arguments here are self, game, x, and y
@@ -60,6 +108,8 @@ class Player(Sprite):
         self.load_images()
         #the images are being loaded
         self.image = pg.Surface((TILESIZE, TILESIZE))
+        self.image = self.spritesheet.get_image(0,0,TILESIZE,TILESIZE)
+        self.image.set_colorkey(BLACK)
         #the sprite is white
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
@@ -67,20 +117,26 @@ class Player(Sprite):
         #the position of the sprite is (x,y) times tile size
         self.pos = vec(x,y) * TILESIZE
         self.hit_rect = PLAYER_HIT_RECT
-        #self.jumping and self.walking are set to False
+        #self.jumping and self.moving are set to False
         self.jumping = False
         self.moving = False
         #the last update variable is set to 0
         self.last_update = 0
         #current frame variable is set to 0
         self.current_frame = 0
+        self.state_machine = StateMachine()
+        self.states: Array[State] = [PlayerIdleState(self), PlayerMoveState(self)]
+        self.state_machine.start_machine(self.states)
 
     #defining a function called get_keys
     def get_keys(self):
         self.vel = vec(0,0)
         keys = pg.key.get_pressed()
-        #if conditions are created for what happens if we press w,a,s,or d
+        #if conditions are created for what happens if we press w,a,s,d, or f
         #the code inside is based on how coordinates change when the object moves
+        if keys[pg.K_f]:
+            print('fired a projectile')
+            p = Projectile(self.game, self.rect.x, self.rect.y)
         if keys[pg.K_a]:
             self.vel.x = -2 * PLAYER_SPEED
         if keys[pg.K_w]:
@@ -101,6 +157,9 @@ class Player(Sprite):
         #the frame is set to black
         for frame in self.standing_frames:
             frame.set_colorkey(BLACK)
+        #the frame is set to black
+        for frame in self.moving_frames:
+            frame.set_colorkey(BLACK)
 
     #animating our sprite
     def animate(self):
@@ -108,6 +167,7 @@ class Player(Sprite):
         if not self.jumping and not self.moving:
             #check if now minus self.last_update is greater than 350
             if now - self.last_update > 350:
+                print(now - self.last_update)
                 self.last_update = now
                 self.current_frame = (self.current_frame + 1) % len(self.standing_frames)
                 bottom = self.rect.bottom
@@ -146,12 +206,36 @@ class Player(Sprite):
         #calling collide_with_walls function relative to y position
         collide_with_walls(self, self.game.all_walls, 'y')
         self.rect.centerx - self.hit_rect.centery
-    
+
+#class Wall is being created
+class Wall(Sprite):
+    #function __init__ is defined
+    def __init__(self, game, x, y):
+        #the groups have all sprites and all walls
+        self.groups = game.all_sprites, game.all_walls
+        Sprite.__init__(self, self.groups)
+        #self.game is set to game
+        self.game = game
+        self.image = game.wall_img
+        #self.image is based on tile size
+        #self.image = pg.Surface((TILESIZE, TILESIZE))
+        #The wall color is green
+        #self.image.fill(GREEN)
+        self.rect = self.image.get_rect()
+        #the velocity is set to vec(0,0)
+        self.vel = vec(0,0)
+        #the position is based on x, y, and tile size
+        self.pos = vec(x,y) * TILESIZE
+        self.rect.center = self.pos
+    #function update is defined
+    def update(self):
+        pass
+
 #the class Mob is created
 class Mob(Sprite):
     #__init__ function is defined
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.all_mobs
+        self.groups = game.all_sprites, game.all_sprites
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
@@ -186,6 +270,30 @@ class Mob(Sprite):
         if self.pos.y >= HEIGHT:
             print("You Win!")
 
+#the class Projectile is created
+class Projectile(Sprite):
+    #__init__ function is defined
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_sprites, game.all_projectiles
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        #Mob is made red
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.vel = vec(1,0)
+        self.pos = vec(x,y) * TILESIZE
+        #the speed is set to 10
+        self.speed = 10
+        print("i'm a real projectile")
+    #update function is defined
+    def update(self):
+        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+        print(hits)
+        print(hits)
+        self.pos += self.speed * self.vel
+        self.rect.center = self.pos
+
 #class Coin is being created
 class Coin(Sprite):
     # function __init__ is defined with parameters self, game, x, and y
@@ -204,28 +312,5 @@ class Coin(Sprite):
         self.pos = vec(x,y) * TILESIZE
         self.rect.center = self.pos
     #update function is defined with parameter self
-    def update(self):
-        pass
-#class Wall is being created
-class Wall(Sprite):
-    #function __init__ is defined
-    def __init__(self, game, x, y):
-        #the groups have all sprites and all walls
-        self.groups = game.all_sprites, game.all_walls
-        Sprite.__init__(self, self.groups)
-        #self.game is set to game
-        self.game = game
-        self.image = game.wall_img
-        #self.image is based on tile size
-        #self.image = pg.Surface((TILESIZE, TILESIZE))
-        #The wall color is green
-        #self.image.fill(GREEN)
-        self.rect = self.image.get_rect()
-        #the velocity is set to vec(0,0)
-        self.vel = vec(0,0)
-        #the position is based on x, y, and tile size
-        self.pos = vec(x,y) * TILESIZE
-        self.rect.center = self.pos
-    #function update is defined
     def update(self):
         pass
