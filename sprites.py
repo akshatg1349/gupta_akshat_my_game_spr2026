@@ -1,9 +1,12 @@
+from ctypes import Array
+
 #importing pygame, Sprite, and path
 import pygame as pg
 from pygame.sprite import Sprite
 from settings import *
 from utils import *
 from os import path
+from state_machine import *
 
 #vec is given a specific value pg.math.Vector2
 vec = pg.math.Vector2
@@ -45,7 +48,52 @@ def collide_with_walls(sprite, group, dir):
                 sprite.pos.y = hits[0].rect.bottom + sprite.hit_rect.height / 2
             sprite.vel.y = 0
             sprite.hit_rect.centery = sprite.pos.y
+from state_machine import *
+from settings import *
 
+class PlayerIdleState(State):
+    def __init__(self, player):
+        self.player = player
+        self.name = "idle"
+
+    def get_state_name(self):
+        return "idle"
+
+    def enter(self):
+        self.player.image.fill(WHITE)
+        print('enter player idle state')
+
+    def exit(self):
+        print('exit player idle state')
+
+    def update(self):
+        # print('updating player idle state...')
+        self.player.image.fill(WHITE)
+        keys = pg.key.get_pressed()
+        if keys[pg.K_k]:
+            print('transitioning to attack state...')
+            self.player.state_machine.transition("attack")
+            
+class PlayerMoveState(State):
+    def __init__(self, player):
+        self.player = player
+        self.name = "move"
+
+    def get_state_name(self):
+        return "move"
+
+    def enter(self):
+        self.player.image.fill(WHITE)
+        print('enter player move state')
+
+    def exit(self):
+        print('exit player move state')
+
+    def update(self):
+        # print('updating player move state...')
+        self.player.image.fill(GREEN)
+        keys = pg.key.get_pressed()
+  
 #a class Player with the argument Sprite
 class Player(Sprite):
     #the arguments here are self, game, x, and y
@@ -76,6 +124,9 @@ class Player(Sprite):
         self.last_update = 0
         #current frame variable is set to 0
         self.current_frame = 0
+        self.state_machine = StateMachine()
+        self.states: Array[State] = [PlayerIdleState(self), PlayerMoveState(self)]
+        self.state_machine.start_machine(self.states)
 
     #defining a function called get_keys
     def get_keys(self):
@@ -219,7 +270,7 @@ class Mob(Sprite):
         if self.pos.y >= HEIGHT:
             print("You Win!")
 
-#the class Mob is created
+#the class Projectile is created
 class Projectile(Sprite):
     #__init__ function is defined
     def __init__(self, game, x, y):
