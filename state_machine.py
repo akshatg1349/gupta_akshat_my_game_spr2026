@@ -1,5 +1,9 @@
+
 is_log_enabled: bool = False
+#we are defining a class called State
 class State():
+    #functions such as __init__, enter, exit, and update all need only a pass keyword
+    #get_state_name just returns ""
     def __init__(self):
         pass
     def enter(self):
@@ -63,3 +67,6 @@ class StateMachine():
         else:
             if is_log_enabled:
                 print("attempt to transition to " + new_state_name + " ignored since it is the current state...")
+    
+
+

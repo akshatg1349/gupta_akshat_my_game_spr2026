@@ -278,7 +278,7 @@ class Projectile(Sprite):
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        #Mob is made red
+        #Projectile is made red
         self.image.fill(RED)
         self.rect = self.image.get_rect()
         self.vel = vec(1,0)
