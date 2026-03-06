@@ -52,6 +52,7 @@ class Game:
         self.all_walls = pg.sprite.Group()
         self.all_coins = pg.sprite.Group()
         self.all_mobs = pg.sprite.Group()
+        self.all_projectiles = pg.sprite.Group()
         self.player_group = pg.sprite.Group()
         #A player, mob, and coin are being added on the screen
         #self.player = Player(self, 15, 15)
