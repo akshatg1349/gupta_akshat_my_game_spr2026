@@ -259,7 +259,7 @@ class Mob(Sprite):
         if hits:
             print("You gained speed")
             #the speed is increased by 10
-            self.speed += 10
+            self.speed += 5
 
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
