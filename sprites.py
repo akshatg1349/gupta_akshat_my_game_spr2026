@@ -255,6 +255,12 @@ class Mob(Sprite):
             #the speed is subtracted by 1
             self.speed -= 1
 
+        hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
+        if hits:
+            print("You gained speed")
+            #the speed is increased by 2
+            self.speed += 2
+
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
             self.pos.y += TILESIZE
