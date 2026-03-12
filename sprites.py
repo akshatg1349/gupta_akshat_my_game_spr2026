@@ -258,8 +258,8 @@ class Mob(Sprite):
         hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
         if hits:
             print("You gained speed")
-            #the speed is increased by 2
-            self.speed += 2
+            #the speed is increased by 10
+            self.speed += 10
 
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
