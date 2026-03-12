@@ -129,7 +129,7 @@ class Game:
         #the screen becomes blued
         self.screen.fill(BLUE)
         #The Hello World text is printed
-        self.draw_text("Hello World", 24, WHITE, WIDTH/2, TILESIZE)
+        self.draw_text("The Escape From The Mob", 24, WHITE, WIDTH/2, TILESIZE)
         self.draw_text(str(self.dt), 24, WHITE, WIDTH/2, HEIGHT/4)
         # self.draw_text(str(self.game_cooldown.time), 24, WHITE, WIDTH/2, HEIGHT/.5)
         self.draw_text(str(self.game_cooldown.ready()), 24, WHITE, WIDTH/2, HEIGHT/3)

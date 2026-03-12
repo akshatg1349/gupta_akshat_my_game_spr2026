@@ -128,6 +128,27 @@ class Player(Sprite):
         self.states: Array[State] = [PlayerIdleState(self), PlayerMoveState(self)]
         self.state_machine.start_machine(self.states)
 
+    def update(self):
+
+        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+        if hits:
+            print("collided")
+            #the speed is subtracted by 1
+            self.speed -= 1
+            print("Your new speed is " + str(self.speed))
+
+        hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
+        if hits:
+            print("You gained speed")
+            #the speed is increased by 10
+            self.speed += 5
+            print("Your new speed is " + str(self.speed))
+
+        hits = pg.sprite.spritecollide(self, self.game.all_mobs, False)
+        if hits:
+            print("You lose!")
+            exit
+
     #defining a function called get_keys
     def get_keys(self):
         self.vel = vec(0,0)
@@ -235,7 +256,7 @@ class Wall(Sprite):
 class Mob(Sprite):
     #__init__ function is defined
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.all_sprites
+        self.groups = game.all_sprites, game.all_sprites, game.all_mobs
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
@@ -254,12 +275,14 @@ class Mob(Sprite):
             print("collided")
             #the speed is subtracted by 1
             self.speed -= 1
+            print("Your new speed is " + str(self.speed))
 
         hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
         if hits:
             print("You gained speed")
             #the speed is increased by 10
             self.speed += 5
+            print("Your new speed is " + str(self.speed))
 
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
