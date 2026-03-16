@@ -129,25 +129,29 @@ class Player(Sprite):
         self.state_machine.start_machine(self.states)
 
     def update(self):
-
-        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
-        if hits:
-            print("collided")
-            #the speed is subtracted by 1
-            self.speed -= 1
-            print("Your new speed is " + str(self.speed))
-
-        hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
-        if hits:
-            print("You gained speed")
-            #the speed is increased by 10
-            self.speed += 5
-            print("Your new speed is " + str(self.speed))
-
-        hits = pg.sprite.spritecollide(self, self.game.all_mobs, False)
-        if hits:
-            print("You lose!")
-            exit
+        # print("player updating")
+        self.state_machine.update()
+        #you get_keys, check state, and animate
+        self.get_keys()
+        self.state_check()
+        self.animate()
+        #adjusts the positions accordingly
+        self.rect.center = self.pos
+        self.pos += self.vel * self.game.dt
+        #if you hit something and the corresponding effect is a speed powerup, you will get faster
+        pu_hits = pg.sprite.spritecollide(self, self.game.all_powerups, True)
+        if pu_hits:
+            if pu_hits[0].effect == "speed":
+                print("i got a speed powerup...")
+        #this checks if you hit a mob, and if you did, you lose the game
+        m_hits = pg.sprite.spritecollide(self, self.game.all_mobs, False)
+        if m_hits:
+            print("You lose")
+        self.hit_rect.centerx = self.pos.x
+        collide_with_walls(self, self.game.all_walls, 'x')
+        self.hit_rect.centery = self.pos.y
+        collide_with_walls(self, self.game.all_walls, 'y')
+        self.rect.center = self.hit_rect.center
 
     #defining a function called get_keys
     def get_keys(self):
@@ -256,7 +260,7 @@ class Wall(Sprite):
 class Mob(Sprite):
     #__init__ function is defined
     def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.all_sprites, game.all_mobs
+        self.groups = game.all_sprites, game.all_mobs
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
