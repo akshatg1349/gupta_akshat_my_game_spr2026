@@ -301,7 +301,8 @@ class Mob(Sprite):
         self.rect.center = self.pos
 
         if self.pos.y >= HEIGHT:
-            print("You Win!")
+            print("You Win!")       
+            self.game.won = True     
 
 #the class Projectile is created
 class Projectile(Sprite):
@@ -344,6 +345,38 @@ class Coin(Sprite):
         #its position is based on x and y positions and tile size
         self.pos = vec(x,y) * TILESIZE
         self.rect.center = self.pos
+
+    def update(self):
+        pass
+
+
+class EffectTrail(Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self.groups = game.all_sprites
+        Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((TILESIZE,TILESIZE), pg.SRCALPHA)
+        self.alpha = 255
+        self.image.fill((255,255,255,255))
+        self.rect = self.image.get_rect()
+        self.cd = Cooldown(10)
+        self.rect.x = x
+        self.rect.y = y
+        # coin behavior
+        self.scale_x = 32
+        self.scale_y = 32
+    def update(self):
+        if self.alpha <= 100:
+            self.kill()
+        self.image.fill((255,255,255,self.alpha))
+        
+        if self.cd.ready():
+            self.scale_x -=1
+            self.scale_y -=1
+            print("I'm ready")
+            self.alpha -= 5
+            new_image = pg.transform.scale(self.image, (self.scale_x, self.scale_y))
+            self.image = new_image
     #update function is defined with parameter self
     def update(self):
         pass

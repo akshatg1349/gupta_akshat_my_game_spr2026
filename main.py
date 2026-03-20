@@ -26,6 +26,7 @@ class Game:
         #the game will be running and playing
         self.running = True
         self.playing = True
+        self.won = False
         #self.load_data()
         #the cooldown is set to 5000 milliseconds
         self.game_cooldown = Cooldown(5000)
@@ -62,7 +63,7 @@ class Game:
         for row, tiles in enumerate(self.map.data):
             for col, tile, in enumerate(tiles):
                 if tile == '1':
-                    #call class constructor without assigning variable...when
+                    #call class constructor without assigning variables
                     self.wall = Wall(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
@@ -70,6 +71,7 @@ class Game:
                     self.mob = Mob(self, col, row)
                 if tile == 'C':
                     self.coin = Coin(self, col, row)
+
         self.run()
     #function run is defined
     def run(self):
@@ -123,13 +125,14 @@ class Game:
     #function update is created
     def update(self):
         self.all_sprites.update()
-        print(len(self.all_projectiles))
 
     def draw(self):
         #the screen becomes blued
         self.screen.fill(BLUE)
         #The Hello World text is printed
         self.draw_text("The Escape From The Mob", 24, WHITE, WIDTH/2, TILESIZE)
+        if self.won == True:
+            self.draw_text("You Win!", 32, GREEN, WIDTH/2, TILESIZE*2)
         self.draw_text(str(self.dt), 24, WHITE, WIDTH/2, HEIGHT/4)
         # self.draw_text(str(self.game_cooldown.time), 24, WHITE, WIDTH/2, HEIGHT/.5)
         self.draw_text(str(self.game_cooldown.ready()), 24, WHITE, WIDTH/2, HEIGHT/3)
@@ -139,7 +142,7 @@ class Game:
 
     #the function draw_text is created with certain parameters
     def draw_text(self, text, size, color, x, y):
-        #we have a font
+        #we have a font arial
         font_name = pg.font.match_font('arial')
         #we have a font size
         font = pg.font.Font(font_name, size)
