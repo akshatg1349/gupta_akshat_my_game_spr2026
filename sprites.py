@@ -139,8 +139,10 @@ class Player(Sprite):
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
         #if you hit something and the corresponding effect is a speed powerup, you will get faster
-        pu_hits = pg.sprite.spritecollide(self, self.game.all_powerups, True)
+        coin_hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
+        pu_hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
         if pu_hits:
+            self.game.pickup_snd.play()
             if pu_hits[0].effect == "speed":
                 print("i got a speed powerup...")
         #this checks if you hit a mob, and if you did, you lose the game
@@ -302,7 +304,7 @@ class Mob(Sprite):
 
         if self.pos.y >= HEIGHT:
             print("You Win!")       
-            self.game.won = True     
+            self.game.won = True
 
 #the class Projectile is created
 class Projectile(Sprite):

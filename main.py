@@ -17,6 +17,7 @@ vec = pg.math.Vector2
 class Game:
     def __init__(self):
         pg.init()
+        pg.mixer.init()
         #setting up pygame screen using tuple value for width and height
         self.screen = pg.display.set_mode((WIDTH, HEIGHT))
         #setting up the title
@@ -40,7 +41,9 @@ class Game:
     def load_data(self):
         self.game_dir = path.dirname(__file__)
         self.img_dir = path.join(self.game_dir, 'images')
+        self.snd_dir = path.join(self.game_dir, 'sounds')
         self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art.png')).convert_alpha()
+        self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "pickup.wav"))
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         print('data is loaded')
         
@@ -71,6 +74,10 @@ class Game:
                     self.mob = Mob(self, col, row)
                 if tile == 'C':
                     self.coin = Coin(self, col, row)
+        #the music Juhani Junkala_Stage 1 is played
+        pg.mixer.music.load(path.join(self.snd_dir, "Juhani Junkala_Stage 1.ogg"))
+        #it loops
+        pg.mixer.music.play(loops=-1)
 
         self.run()
     #function run is defined
