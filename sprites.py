@@ -128,6 +128,7 @@ class Player(Sprite):
         self.states: Array[State] = [PlayerIdleState(self), PlayerMoveState(self)]
         self.state_machine.start_machine(self.states)
 
+    
     def update(self):
         # print("player updating")
         self.state_machine.update()
@@ -138,17 +139,8 @@ class Player(Sprite):
         #adjusts the positions accordingly
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
-        #if you hit something and the corresponding effect is a speed powerup, you will get faster
-        coin_hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
-        pu_hits = pg.sprite.spritecollide(self, self.game.all_coins, True)
-        if pu_hits:
-            self.game.pickup_snd.play()
-            if pu_hits[0].effect == "speed":
-                print("i got a speed powerup...")
-        #this checks if you hit a mob, and if you did, you lose the game
-        m_hits = pg.sprite.spritecollide(self, self.game.all_mobs, False)
-        if m_hits:
-            print("You lose")
+        self.collide_with_stuff(self.game.all_mobs, True)
+        self.collide_with_stuff(self.game.all_coins, True)
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
         self.hit_rect.centery = self.pos.y
@@ -216,6 +208,16 @@ class Player(Sprite):
             self.moving = True
         else:
             self.moving = False
+
+    def collide_with_stuff(self, group, kill):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits:
+            if str(hits[0].__class__.__name__) == "Mob":
+                print("You lose")
+            if str(hits[0].__class__.__name__) == "Coin":
+                print("You gained speed")
+                self.game.pickup_snd.play("pickup.wav")
+
 
     #update function is created with parameter self
     def update(self):

@@ -39,12 +39,17 @@ class Game:
     #a method is a function tied to a Class
     #load_data is defined
     def load_data(self):
+        #get the images and sounds
         self.game_dir = path.dirname(__file__)
         self.img_dir = path.join(self.game_dir, 'images')
         self.snd_dir = path.join(self.game_dir, 'sounds')
+        #get the design for the walls in the game
         self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art.png')).convert_alpha()
+        #get the pickup sound for picking up a coin
         self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "pickup.wav"))
+        #load level 1 from text into sprites
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
+        #data is loaded
         print('data is loaded')
         
     #function 'new' is defined
@@ -161,7 +166,7 @@ class Game:
         text_rect.midtop = (x,y)
         #self.scree.blit has two parameters, text_surface and text_rect
         self.screen.blit(text_surface, text_rect)
-        
+
 #if __name = "__main__" and creating a variable g
 if __name__ == "__main__":
     g = Game()
