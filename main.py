@@ -47,6 +47,7 @@ class Game:
         self.wall_img = pg.image.load(path.join(self.img_dir, 'wall_art.png')).convert_alpha()
         #get the pickup sound for picking up a coin
         self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "pickup.wav"))
+        self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "crunch.wav"))
         #load level 1 from text into sprites
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         #data is loaded
@@ -104,7 +105,7 @@ class Game:
                 if self.playing:
                     #the game is not playing
                     self.playing = False
-                #the game is not running
+                #the game is not running\
                 self.running = False
             if event.type == pg.MOUSEBUTTONUP:
                 #mouse input is received

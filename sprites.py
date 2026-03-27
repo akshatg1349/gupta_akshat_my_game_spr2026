@@ -137,14 +137,14 @@ class Mob(Sprite):
             print("collided")
             #the speed is subtracted by 1
             self.speed -= 1
-            print("Your new speed is " + str(self.speed))
+            print("The mob's new speed is " + str(self.speed))
 
         hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
         if hits:
-            print("You gained speed")
-            #the speed is increased by 10
+            print("The mob gained speed")
+            #the speed is increased by 5
             self.speed += 5
-            print("Your new speed is " + str(self.speed))
+            print("The mob's new speed is " + str(self.speed))
 
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
@@ -157,7 +157,7 @@ class Mob(Sprite):
             self.pos.y += TILESIZE
         self.pos += self.speed * self.vel
         self.rect.center = self.pos
-
+        
         if self.pos.y >= HEIGHT:
             print("You Win!")       
             self.game.won = True
@@ -182,7 +182,6 @@ class Projectile(Sprite):
     def update(self):
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         print(hits)
-        print(hits)
         self.pos += self.speed * self.vel
         self.rect.center = self.pos
 
@@ -205,6 +204,7 @@ class Player(Sprite):
         #the sprite is white
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
+        PLAYER_SPEED = 200
         self.vel = vec(0,0)
         #the position of the sprite is (x,y) times tile size
         self.pos = vec(x,y) * TILESIZE
@@ -219,6 +219,20 @@ class Player(Sprite):
         self.state_machine = StateMachine()
         self.states: Array[State] = [PlayerIdleState(self), PlayerMoveState(self)]
         self.state_machine.start_machine(self.states)
+
+        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+        if hits:
+            print("collided")
+            #the speed is subtracted by 1
+            PLAYER_SPEED -= 1
+            print("Your new speed is " + str(PLAYER_SPEED))
+
+        hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
+        if hits:
+            print("You gained speed")
+            #the speed is increased by 10
+            PLAYER_SPEED += 5
+            print("Your new speed is " + str(PLAYER_SPEED))
 
     
     def update(self):
@@ -297,8 +311,10 @@ class Player(Sprite):
 
     def state_check(self):
         if self.vel != vec(0,0):
+            self.state_machine.transition("move")
             self.moving = True
         else:
+            self.state_machine.transition("idle")
             self.moving = False
 
     def collide_with_stuff(self, group, kill):
@@ -307,12 +323,11 @@ class Player(Sprite):
             if str(hits[0].__class__.__name__) == "Mob":
                 print("You lose")
             if str(hits[0].__class__.__name__) == "Coin":
-                print("You gained speed")
-                self.game.pickup_snd.play("pickup.wav")
-                self.game_dir = path.dirname(__file__)
-                self.snd_dir = path.join(self.game_dir, 'sounds')
-                self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "pickup.wav"))
-
+                print("I gained a speed powerup")
+                self.game.pickup_snd.play()
+            if str(hits[0].__class__.__name__) == "Wall":
+                print("i collided with a Wall")
+                self.game.crunch_snd.play()
 
     #update function is created with parameter self
     def update(self):
