@@ -93,7 +93,99 @@ class PlayerMoveState(State):
         # print('updating player move state...')
         self.player.image.fill(GREEN)
         keys = pg.key.get_pressed()
-  
+#class Coin is being created
+class Coin(Sprite):
+    # function __init__ is defined with parameters self, game, x, and y
+    def __init__(self, game, x, y):
+        self.game = game
+        self.x = x
+        self.y = y
+        self.groups = game.all_sprites, game.all_coins
+        Sprite.__init__(self, self.groups)
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        #the coin is yellow
+        self.image.fill(YELLOW)
+        self.rect = self.image.get_rect()
+        self.vel = vec(0,0)
+        #its position is based on x and y positions and tile size
+        self.pos = vec(x,y) * TILESIZE
+        self.rect.center = self.pos
+
+    def update(self):
+        pass
+
+#the class Mob is created
+class Mob(Sprite):
+    #__init__ function is defined
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_mobs
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        #Mob is made red
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.vel = vec(1,0)
+        self.pos = vec(x,y) * TILESIZE
+        #the speed is set to 10
+        self.speed = 10
+    #update function is defined
+    def update(self):
+
+        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+        if hits:
+            print("collided")
+            #the speed is subtracted by 1
+            self.speed -= 1
+            print("Your new speed is " + str(self.speed))
+
+        hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
+        if hits:
+            print("You gained speed")
+            #the speed is increased by 10
+            self.speed += 5
+            print("Your new speed is " + str(self.speed))
+
+        if self.rect.x > WIDTH or self.rect.x < 0:
+            self.speed *= -1
+            self.pos.y += TILESIZE
+            self.pos += self.speed * self.vel
+            self.rect.center = self.pos
+
+        if self.rect.x > WIDTH or self.rect.x < 0:
+            self.speed *= -1
+            self.pos.y += TILESIZE
+        self.pos += self.speed * self.vel
+        self.rect.center = self.pos
+
+        if self.pos.y >= HEIGHT:
+            print("You Win!")       
+            self.game.won = True
+
+#the class Projectile is created
+class Projectile(Sprite):
+    #__init__ function is defined
+    def __init__(self, game, x, y):
+        self.groups = game.all_sprites, game.all_sprites, game.all_projectiles
+        Sprite.__init__(self, self.groups)
+        self.game = game
+        self.image = pg.Surface((TILESIZE, TILESIZE))
+        #Projectile is made red
+        self.image.fill(RED)
+        self.rect = self.image.get_rect()
+        self.vel = vec(1,0)
+        self.pos = vec(x,y) * TILESIZE
+        #the speed is set to 10
+        self.speed = 10
+        print("i'm a real projectile")
+    #update function is defined
+    def update(self):
+        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
+        print(hits)
+        print(hits)
+        self.pos += self.speed * self.vel
+        self.rect.center = self.pos
+
 #a class Player with the argument Sprite
 class Player(Sprite):
     #the arguments here are self, game, x, and y
@@ -217,6 +309,9 @@ class Player(Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 print("You gained speed")
                 self.game.pickup_snd.play("pickup.wav")
+                self.game_dir = path.dirname(__file__)
+                self.snd_dir = path.join(self.game_dir, 'sounds')
+                self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "pickup.wav"))
 
 
     #update function is created with parameter self
@@ -257,99 +352,6 @@ class Wall(Sprite):
         self.pos = vec(x,y) * TILESIZE
         self.rect.center = self.pos
     #function update is defined
-    def update(self):
-        pass
-
-#the class Mob is created
-class Mob(Sprite):
-    #__init__ function is defined
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.all_mobs
-        Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        #Mob is made red
-        self.image.fill(RED)
-        self.rect = self.image.get_rect()
-        self.vel = vec(1,0)
-        self.pos = vec(x,y) * TILESIZE
-        #the speed is set to 10
-        self.speed = 10
-    #update function is defined
-    def update(self):
-
-        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
-        if hits:
-            print("collided")
-            #the speed is subtracted by 1
-            self.speed -= 1
-            print("Your new speed is " + str(self.speed))
-
-        hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
-        if hits:
-            print("You gained speed")
-            #the speed is increased by 10
-            self.speed += 5
-            print("Your new speed is " + str(self.speed))
-
-        if self.rect.x > WIDTH or self.rect.x < 0:
-            self.speed *= -1
-            self.pos.y += TILESIZE
-            self.pos += self.speed * self.vel
-            self.rect.center = self.pos
-
-        if self.rect.x > WIDTH or self.rect.x < 0:
-            self.speed *= -1
-            self.pos.y += TILESIZE
-        self.pos += self.speed * self.vel
-        self.rect.center = self.pos
-
-        if self.pos.y >= HEIGHT:
-            print("You Win!")       
-            self.game.won = True
-
-#the class Projectile is created
-class Projectile(Sprite):
-    #__init__ function is defined
-    def __init__(self, game, x, y):
-        self.groups = game.all_sprites, game.all_sprites, game.all_projectiles
-        Sprite.__init__(self, self.groups)
-        self.game = game
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        #Projectile is made red
-        self.image.fill(RED)
-        self.rect = self.image.get_rect()
-        self.vel = vec(1,0)
-        self.pos = vec(x,y) * TILESIZE
-        #the speed is set to 10
-        self.speed = 10
-        print("i'm a real projectile")
-    #update function is defined
-    def update(self):
-        hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
-        print(hits)
-        print(hits)
-        self.pos += self.speed * self.vel
-        self.rect.center = self.pos
-
-#class Coin is being created
-class Coin(Sprite):
-    # function __init__ is defined with parameters self, game, x, and y
-    def __init__(self, game, x, y):
-        self.game = game
-        self.x = x
-        self.y = y
-        self.groups = game.all_sprites, game.all_coins
-        Sprite.__init__(self, self.groups)
-        self.image = pg.Surface((TILESIZE, TILESIZE))
-        #the coin is yellow
-        self.image.fill(YELLOW)
-        self.rect = self.image.get_rect()
-        self.vel = vec(0,0)
-        #its position is based on x and y positions and tile size
-        self.pos = vec(x,y) * TILESIZE
-        self.rect.center = self.pos
-
     def update(self):
         pass
 
