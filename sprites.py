@@ -234,7 +234,7 @@ class Player(Sprite):
             PLAYER_SPEED += 5
             print("Your new speed is " + str(PLAYER_SPEED))
 
-    
+    #update function is created with parameter self
     def update(self):
         # print("player updating")
         self.state_machine.update()
@@ -247,6 +247,7 @@ class Player(Sprite):
         self.pos += self.vel * self.game.dt
         self.collide_with_stuff(self.game.all_mobs, True)
         self.collide_with_stuff(self.game.all_coins, True)
+        self.collide_with_stuff(self.game.all_walls, True)
         self.hit_rect.centerx = self.pos.x
         collide_with_walls(self, self.game.all_walls, 'x')
         self.hit_rect.centery = self.pos.y
@@ -329,22 +330,6 @@ class Player(Sprite):
                 print("i collided with a Wall")
                 self.game.crunch_snd.play()
 
-    #update function is created with parameter self
-    def update(self):
-        #we are using the get_keys function on self
-        self.get_keys()
-        self.state_check()
-        self.animate()
-        #the rect center is equal to the position
-        self.rect.center = self.pos
-        self.pos += self.vel * self.game.dt
-        self.hit_rect.centerx = self.pos.x
-        #calling collide_with_walls function relative to x position
-        collide_with_walls(self, self.game.all_walls, 'x')
-        self.hit_rect.centery = self.pos.y
-        #calling collide_with_walls function relative to y position
-        collide_with_walls(self, self.game.all_walls, 'y')
-        self.rect.centerx - self.hit_rect.centery
 
 #class Wall is being created
 class Wall(Sprite):
