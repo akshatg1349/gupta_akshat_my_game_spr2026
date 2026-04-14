@@ -323,6 +323,7 @@ class Player(Sprite):
         if hits:
             if str(hits[0].__class__.__name__) == "Mob":
                 print("You lose")
+                self.won = False
             if str(hits[0].__class__.__name__) == "Coin":
                 print("I gained a speed powerup")
                 self.game.pickup_snd.play()

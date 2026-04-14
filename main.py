@@ -27,7 +27,7 @@ class Game:
         #the game will be running and playing
         self.running = True
         self.playing = True
-        self.won = False
+        self.won = None
         #self.load_data()
         #the cooldown is set to 5000 milliseconds
         self.game_cooldown = Cooldown(5000)
@@ -140,6 +140,19 @@ class Game:
     def update(self):
         self.all_sprites.update()
 
+    def collide_with_stuff(self, group, kill):
+        hits = pg.sprite.spritecollide(self, group, kill)
+        if hits:
+            if str(hits[0].__class__.__name__) == "Mob":
+                print("You lose")
+                self.won = False
+            if str(hits[0].__class__.__name__) == "Coin":
+                print("I gained a speed powerup")
+                self.game.pickup_snd.play()
+            if str(hits[0].__class__.__name__) == "Wall":
+                print("i collided with a Wall")
+                self.game.crunch_snd.play()
+
     def draw(self):
         #the screen becomes blued
         self.screen.fill(BLUE)
@@ -147,6 +160,8 @@ class Game:
         self.draw_text("The Escape From The Mob", 24, WHITE, WIDTH/2, TILESIZE)
         if self.won == True:
             self.draw_text("You Win!", 32, GREEN, WIDTH/2, TILESIZE*2)
+        if self.won == False:
+            self.draw_text("You Lose!", 32, GREEN, WIDTH/2, TILESIZE*2)
         self.draw_text(str(self.dt), 24, WHITE, WIDTH/2, HEIGHT/4)
         # self.draw_text(str(self.game_cooldown.time), 24, WHITE, WIDTH/2, HEIGHT/.5)
         self.draw_text(str(self.game_cooldown.ready()), 24, WHITE, WIDTH/2, HEIGHT/3)
