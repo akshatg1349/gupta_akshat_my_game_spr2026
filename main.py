@@ -106,7 +106,7 @@ class Game:
                 if self.playing:
                     #the game is not playing
                     self.playing = False
-                #the game is not running\
+                #the game is not running
                 self.running = False
             if event.type == pg.MOUSEBUTTONUP:
                 #mouse input is received
@@ -139,19 +139,6 @@ class Game:
     #function update is created
     def update(self):
         self.all_sprites.update()
-
-    def collide_with_stuff(self, group, kill):
-        hits = pg.sprite.spritecollide(self, group, kill)
-        if hits:
-            if str(hits[0].__class__.__name__) == "Mob":
-                print("You lose")
-                self.won = False
-            if str(hits[0].__class__.__name__) == "Coin":
-                print("I gained a speed powerup")
-                self.game.pickup_snd.play()
-            if str(hits[0].__class__.__name__) == "Wall":
-                print("i collided with a Wall")
-                self.game.crunch_snd.play()
 
     def draw(self):
         #the screen becomes blued

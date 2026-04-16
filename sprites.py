@@ -91,7 +91,7 @@ class PlayerMoveState(State):
 
     def update(self):
         # print('updating player move state...')
-        self.player.image.fill(GREEN)
+        self.player.image.fill(WHITE)
         keys = pg.key.get_pressed()
 #class Coin is being created
 class Coin(Sprite):
@@ -131,6 +131,11 @@ class Mob(Sprite):
         self.speed = 10
     #update function is defined
     def update(self):
+        self.pos.x * self.vel.x * self.game.dt
+        self.rect.center = self.pos
+        self.rect.x += 1
+        self.rect.center = self.pos
+        print(self.pos)
 
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         if hits:
@@ -159,7 +164,6 @@ class Mob(Sprite):
         self.rect.center = self.pos
         
         if self.pos.y >= HEIGHT:
-            print("You Win!")       
             self.game.won = True
 
 #the class Projectile is created
