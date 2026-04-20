@@ -143,7 +143,7 @@ class Game:
     def draw(self):
         #the screen becomes blued
         self.screen.fill(BLUE)
-        #The Hello World text is printed
+        #the 'The Escape From The Mob' text is printed
         self.draw_text("The Escape From The Mob", 24, WHITE, WIDTH/2, TILESIZE)
         if self.won == True:
             self.draw_text("You Win!", 32, GREEN, WIDTH/2, TILESIZE*2)
