@@ -162,7 +162,7 @@ class Mob(Sprite):
             self.pos.y += TILESIZE
         self.pos += self.speed * self.vel
         self.rect.center = self.pos
-        
+        #if the mob's y position is greater than or equal to the height, then you win the game
         if self.pos.y >= HEIGHT:
             self.game.won = True
 
@@ -184,6 +184,7 @@ class Projectile(Sprite):
         print("i'm a real projectile")
     #update function is defined
     def update(self):
+        #the hits are printed
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         print(hits)
         self.pos += self.speed * self.vel
@@ -226,18 +227,12 @@ class Player(Sprite):
 
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         if hits:
-            print("collided")
-            #the speed is subtracted by 1
-            PLAYER_SPEED -= 1
-            print("Your new speed is " + str(PLAYER_SPEED))
-
+            print("collided with a wall")
+            
         hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
         if hits:
-            print("You gained speed")
-            #the speed is increased by 10
-            PLAYER_SPEED += 5
-            print("Your new speed is " + str(PLAYER_SPEED))
-
+            print("collided with a coin")
+       
     #update function is created with parameter self
     def update(self):
         # print("player updating")
@@ -328,10 +323,14 @@ class Player(Sprite):
             if str(hits[0].__class__.__name__) == "Mob":
                 print("You lose")
                 self.won = False
+                #the player turns red for a split second, signaling that you lost
+                #the mob is no longer on the screen and chases for another player
+                #the 'another player' refers to the next time you boot up this game
                 self.image.fill(RED)
             if str(hits[0].__class__.__name__) == "Coin":
                 print("I gained a speed powerup")
                 self.game.pickup_snd.play()
+                print("You gained speed")
             if str(hits[0].__class__.__name__) == "Wall":
                 print("i collided with a Wall")
                 self.game.crunch_snd.play()
