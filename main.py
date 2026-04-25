@@ -83,7 +83,7 @@ class Game:
                     self.coin = Coin(self, col, row)
         #the music Juhani Junkala_Stage 1 is played
         pg.mixer.music.load(path.join(self.snd_dir, "EscapingAMob.mp3"))
-        #it loopsa
+        #it loops
         pg.mixer.music.play(loops=-1)
 
         self.run()
