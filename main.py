@@ -34,7 +34,8 @@ class Game:
         #the cooldown is going to start
         self.game_cooldown.start()
         self.game_cooldown.ready()
-
+        #the data is being loaded
+        self.load_data()
 
     #a method is a function tied to a Class
     #load_data is defined
@@ -56,8 +57,6 @@ class Game:
         
     #function 'new' is defined
     def new(self):
-        #the dad is being loaded
-        self.load_data()
         #sprites, walls, and mobs are being created
         self.all_sprites = pg.sprite.Group()
         self.all_walls = pg.sprite.Group()
@@ -73,14 +72,14 @@ class Game:
         for row, tiles in enumerate(self.map.data):
             for col, tile, in enumerate(tiles):
                 if tile == '1':
-                    #call class constructor without assigning variables
-                    self.wall = Wall(self, col, row)
+                    Wall(self, col, row)
                 if tile == 'P':
                     self.player = Player(self, col, row)
                 if tile == 'M':
-                    self.mob = Mob(self, col, row)
+                    Mob(self, col, row)
                 if tile == 'C':
-                    self.coin = Coin(self, col, row)
+                    Coin(self, col, row)
+
         #the music Juhani Junkala_Stage 1 is played
         pg.mixer.music.load(path.join(self.snd_dir, "EscapingAMob.mp3"))
         #it loops
@@ -89,11 +88,9 @@ class Game:
         self.run()
     #function run is defined
     def run(self):
-        #check if game is running
-        while self.running:
-            #checking for FPS/1000 or seconds
+        self.playing = True
+        while self.playing:
             self.dt = self.clock.tick(FPS) / 1000
-            #calling events, update, and draw
             self.events()
             self.update()
             self.draw()
@@ -106,8 +103,8 @@ class Game:
                 if self.playing:
                     #the game is not playing
                     self.playing = False
-                #the game is not running
-                self.running = False
+                    #the game is not running
+                    self.running = False
             if event.type == pg.MOUSEBUTTONUP:
                 #mouse input is received
                 print("i can get mouse input")
@@ -139,16 +136,25 @@ class Game:
     #function update is created
     def update(self):
         self.all_sprites.update()
-
+        self.game_cooldown.ready()
     def draw(self):
         #the screen becomes blued
         self.screen.fill(BLUE)
+        tries = 1
+        self.draw_text("Tries:" + str(tries), 24, WHITE, WIDTH/4, TILESIZE)
         #the 'The Escape From The Mob' text is printed
         self.draw_text("The Escape From The Mob", 24, WHITE, WIDTH/2, TILESIZE)
+        #If you win, you see a You Win text displayed
+        #the number of tries you will have will stay constant for the rest of the game
         if self.won == True:
             self.draw_text("You Win!", 32, GREEN, WIDTH/2, TILESIZE*2)
+            self.draw_text("Tries:" + str(tries), 24, WHITE, WIDTH/4, TILESIZE)
+        #If you lose, you see a Try Again text displayed
+        #this continues until you win the game
         if self.won == False:
-            self.draw_text("You Lose!", 32, GREEN, WIDTH/2, TILESIZE*2)
+            self.draw_text("Try Again!", 32, RED, WIDTH/2, TILESIZE*2)
+            tries += 1
+            self.draw_text("Tries:" + str(tries), 24, WHITE, WIDTH/4, TILESIZE)
         self.draw_text(str(self.dt), 24, WHITE, WIDTH/2, HEIGHT/4)
         # self.draw_text(str(self.game_cooldown.time), 24, WHITE, WIDTH/2, HEIGHT/.5)
         self.draw_text(str(self.game_cooldown.ready()), 24, WHITE, WIDTH/2, HEIGHT/3)
@@ -174,8 +180,7 @@ class Game:
 #if __name = "__main__" and creating a variable g
 if __name__ == "__main__":
     g = Game()
-
-while g.running:
-    g.new()
-#calling quit to quit the game
-pg.quit()
+    while g.running:
+        g.new()
+    #calling quit to quit the game
+    pg.quit()

@@ -151,11 +151,11 @@ class Mob(Sprite):
             self.speed += 5
             print("The mob's new speed is " + str(self.speed))
 
-        if self.rect.x > WIDTH or self.rect.x < 0:
-            self.speed *= -1
-            self.pos.y += TILESIZE
-            self.pos += self.speed * self.vel
-            self.rect.center = self.pos
+        # if self.rect.x > WIDTH or self.rect.x < 0:
+        #     self.speed *= -1
+        #     self.pos.y += TILESIZE
+        #     self.pos += self.speed * self.vel
+        #     self.rect.center = self.pos
 
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.speed *= -1
@@ -163,7 +163,7 @@ class Mob(Sprite):
         self.pos += self.speed * self.vel
         self.rect.center = self.pos
         #if the mob's y position is greater than or equal to the height, then you win the game
-        if self.pos.y >= HEIGHT:
+        if self.pos.y >= 656:
             self.game.won = True
 
 #the class Projectile is created
@@ -209,11 +209,10 @@ class Player(Sprite):
         #the sprite is white
         self.image.fill(WHITE)
         self.rect = self.image.get_rect()
-        PLAYER_SPEED = 200
         self.vel = vec(0,0)
         #the position of the sprite is (x,y) times tile size
         self.pos = vec(x,y) * TILESIZE
-        self.hit_rect = PLAYER_HIT_RECT
+        self.hit_rect = PLAYER_HIT_RECT.copy()
         #self.jumping and self.moving are set to False
         self.jumping = False
         self.moving = False
@@ -244,7 +243,6 @@ class Player(Sprite):
         #adjusts the positions accordingly
         self.rect.center = self.pos
         self.pos += self.vel * self.game.dt
-        self.collide_with_stuff(self.game.all_mobs, True)
         self.collide_with_stuff(self.game.all_coins, True)
         self.collide_with_stuff(self.game.all_walls, True)
         self.hit_rect.centerx = self.pos.x
@@ -252,6 +250,11 @@ class Player(Sprite):
         self.hit_rect.centery = self.pos.y
         collide_with_walls(self, self.game.all_walls, 'y')
         self.rect.center = self.hit_rect.center
+
+        hits = pg.sprite.spritecollide(self, self.game.all_mobs, False)
+        if hits:
+            self.game.won = False
+            self.game.playing = False
 
     #defining a function called get_keys
     def get_keys(self):
@@ -321,7 +324,6 @@ class Player(Sprite):
         hits = pg.sprite.spritecollide(self, group, kill)
         if hits:
             if str(hits[0].__class__.__name__) == "Mob":
-                print("You lose")
                 self.won = False
                 #the player turns red for a split second, signaling that you lost
                 #the mob is no longer on the screen and chases for another player
@@ -387,6 +389,3 @@ class EffectTrail(Sprite):
             self.alpha -= 5
             new_image = pg.transform.scale(self.image, (self.scale_x, self.scale_y))
             self.image = new_image
-    #update function is defined with parameter self
-    def update(self):
-        pass
