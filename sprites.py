@@ -116,55 +116,62 @@ class Coin(Sprite):
 
 #the class Mob is created
 class Mob(Sprite):
-    #__init__ function is defined
     def __init__(self, game, x, y):
         self.groups = game.all_sprites, game.all_mobs
         Sprite.__init__(self, self.groups)
         self.game = game
         self.image = pg.Surface((TILESIZE, TILESIZE))
-        #Mob is made red
         self.image.fill(RED)
         self.rect = self.image.get_rect()
-        self.vel = vec(1,0)
-        self.pos = vec(x,y) * TILESIZE
-        #the speed is set to 10
-        self.speed = 10
-    #update function is defined
-    def update(self):
-        self.pos.x * self.vel.x * self.game.dt
-        self.rect.center = self.pos
-        self.rect.x += 1
-        self.rect.center = self.pos
-        print(self.pos)
 
+        # vector position and velocity
+        self.pos = vec(x, y) * TILESIZE
+        self.vel = vec(0, 0)
+
+        # movement speed
+        self.speed = 100     # adjust difficulty here
+
+        self.rect.center = self.pos
+
+    def update(self):
+    # --- HORIZONTAL CHASE ---
+    # move left/right toward the player's x position
+    #Lines 140-156 were generated with Copilot
+        if self.game.player.pos.x < self.pos.x:
+            self.pos.x -= self.speed * self.game.dt
+        elif self.game.player.pos.x > self.pos.x:
+            self.pos.x += self.speed * self.game.dt
+
+        # --- CONSTANT DOWNWARD MOVEMENT ---
+        self.pos.y += self.speed * 0.75 * self.game.dt
+        # adjust 0.5 above to change difficulty
+
+        # --- CLAMP INSIDE SCREEN ---
+        if self.pos.x < 0:
+            self.pos.x = 0
+        if self.pos.x > WIDTH - TILESIZE:
+            self.pos.x = WIDTH - TILESIZE
+
+        if self.pos.y > 656 or self.pos.y < 0 or self.pos.x > 1086 or self.pos.x < 0:
+            #self.pos.y = 656
+            self.game.won = True
+
+        # update rect
+        self.rect.center = self.pos
+
+        # --- COLLISIONS WITH WALLS ---
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         if hits:
             print("collided")
-            #the speed is subtracted by 1
             self.speed -= 1
             print("The mob's new speed is " + str(self.speed))
 
+        # --- COLLISIONS WITH COINS ---
         hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
         if hits:
             print("The mob gained speed")
-            #the speed is increased by 5
             self.speed += 5
             print("The mob's new speed is " + str(self.speed))
-
-        # if self.rect.x > WIDTH or self.rect.x < 0:
-        #     self.speed *= -1
-        #     self.pos.y += TILESIZE
-        #     self.pos += self.speed * self.vel
-        #     self.rect.center = self.pos
-
-        if self.rect.x > WIDTH or self.rect.x < 0:
-            self.speed *= -1
-            self.pos.y += TILESIZE
-        self.pos += self.speed * self.vel
-        self.rect.center = self.pos
-        #if the mob's y position is greater than or equal to the height, then you win the game
-        if self.pos.y >= 656:
-            self.game.won = True
 
 #the class Projectile is created
 class Projectile(Sprite):
