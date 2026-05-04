@@ -36,7 +36,7 @@ class Game:
         self.game_cooldown.ready()
         #the data is being loaded
         self.load_data()
-        self.time = 0
+        self.score = 1000
 
     #a method is a function tied to a Class
     #load_data is defined
@@ -139,32 +139,35 @@ class Game:
         self.all_sprites.update()
         self.game_cooldown.ready()
     def draw(self):
-        self.draw_text("Hectoseconds: " + str(self.time), 24, WHITE, WIDTH/2, TILESIZE)
-        #the screen becomes blued
         self.screen.fill(BLUE)
+        #the screen becomes blued
+        # self.screen.fill(BLUE)
         #the 'The Escape From The Mob' text is printed
         self.draw_text("The Escape From The Mob", 24, WHITE, WIDTH/2, TILESIZE)
         #If you win, you see a You Win text displayed
         #the number of tries you will have will stay constant for the rest of the game
         if self.won == True:
             self.draw_text("You Win!", 32, GREEN, WIDTH/2, TILESIZE*2)
-            self.draw_text("Hectoseconds:" + str(self.time), 24, WHITE, WIDTH/4, TILESIZE)
+            self.draw_text("Score:" + str(self.score), 24, WHITE, WIDTH/4, TILESIZE)
         #If you lose, you see a Try Again text displayed
         #this continues until you win the game
         if self.won == False:
-            self.draw_text("Try Again!", 32, RED, WIDTH/2, TILESIZE*2)
-            self.time += 1
-            self.draw_text("Hectoseconds:" + str(self.time), 24, WHITE, WIDTH/4, TILESIZE)
+            #if you get hit by the mob, you will be started back at your original position
+            self.draw_text("Try Again!", 32, YELLOW, WIDTH/2, TILESIZE*2)
+            self.score -= 1
+            #to match the rate at which the time is changing, the time is in hectoseconds
+            self.draw_text("Score:" + str(self.score), 24, WHITE, WIDTH/4, TILESIZE)
+        if self.score <= 0:
+            #you lose if the score is 0 or lower
+            #Copilot came up with the values
+            pg.draw.rect(self.screen, BLUE, (0, TILESIZE*2 - 10, WIDTH, 80))
+            self.draw_text("You Lose!", 32, RED, WIDTH/1.25, TILESIZE)
         self.draw_text(str(self.dt), 24, WHITE, WIDTH/2, HEIGHT/4)
         # self.draw_text(str(self.game_cooldown.time), 24, WHITE, WIDTH/2, HEIGHT/.5)
         self.draw_text(str(self.game_cooldown.ready()), 24, WHITE, WIDTH/2, HEIGHT/3)
         self.draw_text(str(self.player.pos), 24, WHITE, WIDTH/2, HEIGHT-TILESIZE*3)
         self.all_sprites.draw(self.screen)
         pg.display.flip()
-
-        # def new(self):
-        #     if self.won == False:
-        #         self.time += 1
 
     #the function draw_text is created with certain parameters
     def draw_text(self, text, size, color, x, y):

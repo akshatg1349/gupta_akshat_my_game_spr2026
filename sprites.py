@@ -129,24 +129,24 @@ class Mob(Sprite):
         self.vel = vec(0, 0)
 
         # movement speed
-        self.speed = 100     # adjust difficulty here
+        self.speed = 280     # adjust difficulty here
 
         self.rect.center = self.pos
 
     def update(self):
     # --- HORIZONTAL CHASE ---
     # move left/right toward the player's x position
-    #Lines 140-156 were generated with Copilot
+    #Lines 140-157 were generated with Copilot
         if self.game.player.pos.x < self.pos.x:
             self.pos.x -= self.speed * self.game.dt
         elif self.game.player.pos.x > self.pos.x:
             self.pos.x += self.speed * self.game.dt
 
-        # --- CONSTANT DOWNWARD MOVEMENT ---
-        self.pos.y += self.speed * 0.75 * self.game.dt
-        # adjust 0.5 above to change difficulty
+        # downward movement
+        self.pos.y += self.speed * 0.25 * self.game.dt
+        # 0.5 is used to make the game moderately difficult
 
-        # --- CLAMP INSIDE SCREEN ---
+        # inside screen
         if self.pos.x < 0:
             self.pos.x = 0
         if self.pos.x > WIDTH - TILESIZE:
@@ -159,14 +159,14 @@ class Mob(Sprite):
         # update rect
         self.rect.center = self.pos
 
-        # --- COLLISIONS WITH WALLS ---
+        #colliding with walls
         hits = pg.sprite.spritecollide(self, self.game.all_walls, False)
         if hits:
             print("collided")
             self.speed -= 1
             print("The mob's new speed is " + str(self.speed))
 
-        # --- COLLISIONS WITH COINS ---
+        # colliding with coins
         hits = pg.sprite.spritecollide(self, self.game.all_coins, False)
         if hits:
             print("The mob gained speed")
