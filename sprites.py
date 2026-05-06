@@ -144,7 +144,7 @@ class Mob(Sprite):
 
         # downward movement
         self.pos.y += self.speed * 0.25 * self.game.dt
-        # 0.5 is used to make the game moderately difficult
+        # 0.25 is used to make the game moderately difficult
 
         # inside screen
         if self.pos.x < 0:
@@ -273,13 +273,14 @@ class Player(Sprite):
             print('fired a projectile')
             p = Projectile(self.game, self.rect.x, self.rect.y)
         if keys[pg.K_a]:
-            self.vel.x = -2 * PLAYER_SPEED
-        if keys[pg.K_w]:
-            self.vel.y = -2 * PLAYER_SPEED
-        if keys[pg.K_s]:
-            self.vel.y = 2 * PLAYER_SPEED
+            self.vel.x = 2 * -PLAYER_SPEED
         if keys[pg.K_d]:
             self.vel.x = 2 * PLAYER_SPEED
+        if keys[pg.K_w]:
+            self.vel.y = 2 * -PLAYER_SPEED
+        if keys[pg.K_s]:
+            self.vel.y = 2 * PLAYER_SPEED
+
         #velocity is multiplied by 0.7071
         if self.vel.x != 0 and self.vel.y != 0:
             self.vel *= 0.7071
