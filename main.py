@@ -148,15 +148,17 @@ class Game:
         #the number of tries you will have will stay constant for the rest of the game
         if self.won == True:
             self.draw_text("You Win!", 32, GREEN, WIDTH/2, TILESIZE*2)
-            self.draw_text("Score:" + str(self.score), 24, WHITE, WIDTH/4, TILESIZE)
+            self.draw_text("Score:"+ str(self.score), 24, WHITE, WIDTH/4, TILESIZE)
         #If you lose, you see a Try Again text displayed
         #this continues until you win the game
         if self.won == False:
             #if you get hit by the mob, you will be started back at your original position
             self.draw_text("Try Again!", 32, YELLOW, WIDTH/2, TILESIZE*2)
             self.score -= 1
-            #to match the rate at which the time is changing, the time is in hectoseconds
-            self.draw_text("Score:" + str(self.score), 24, WHITE, WIDTH/4, TILESIZE)
+            if self.score <= 0:
+                self.score = 0
+            #score is always displayed to help you check your progress
+            self.draw_text("Score:"+ str(self.score), 24, WHITE, WIDTH/4, TILESIZE)
         if self.score <= 0:
             #you lose if the score is 0 or lower
             #Copilot came up with the values
