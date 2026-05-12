@@ -91,7 +91,9 @@ class Game:
     def run(self):
         self.playing = True
         while self.playing:
+            #we get 1 second from the below line as 1000 milliesconds = 1 second
             self.dt = self.clock.tick(FPS) / 1000
+            #the game updates and the sprites are drawn onto the screen
             self.events()
             self.update()
             self.draw()
@@ -136,6 +138,7 @@ class Game:
         pass
     #function update is created
     def update(self):
+        #the sprites are updated and the cooldown starts
         self.all_sprites.update()
         self.game_cooldown.ready()
     def draw(self):
