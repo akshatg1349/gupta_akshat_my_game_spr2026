@@ -36,7 +36,7 @@ class Game:
         self.game_cooldown.ready()
         #the data is being loaded
         self.load_data()
-        self.score = 1000
+        self.score = 1200
 
     #a method is a function tied to a Class
     #load_data is defined
@@ -81,7 +81,7 @@ class Game:
                 if tile == 'C':
                     Coin(self, col, row)
 
-        #the music Juhani Junkala_Stage 1 is played
+        #the music EscapingAMob is played
         pg.mixer.music.load(path.join(self.snd_dir, "EscapingAMob.mp3"))
         #it loops
         pg.mixer.music.play(loops=-1)
