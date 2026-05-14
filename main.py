@@ -34,6 +34,7 @@ class Game:
         #the cooldown is going to start
         self.game_cooldown.start()
         self.game_cooldown.ready()
+        self.bg_music = None
         #the data is being loaded
         self.load_data()
         self.score = 1200
@@ -51,6 +52,10 @@ class Game:
         self.pickup_snd = pg.mixer.Sound(path.join(self.snd_dir, "pickup.wav"))
         #get the crunch sound for picking up a coin
         self.crunch_snd = pg.mixer.Sound(path.join(self.snd_dir, "crunch.wav"))
+        #get the game over sound when the player's speed is 0
+        self.gameover_snd = pg.mixer.Sound(path.join(self.snd_dir, "gameOver.mp3"))
+        #this sound will be stopped when the speed of the player is 0
+        self.bg_music = path.join(self.snd_dir, "EscapingAMob.mp3")
         #load level 1 from text into sprites
         self.map = Map(path.join(self.game_dir, 'level1.txt'))
         #data is loaded
@@ -83,6 +88,9 @@ class Game:
 
         #the music EscapingAMob is played
         pg.mixer.music.load(path.join(self.snd_dir, "EscapingAMob.mp3"))
+        pg.mixer.music.load(self.bg_music)
+        pg.mixer.music.play(loops=-1)
+
         #it loops
         pg.mixer.music.play(loops=-1)
 

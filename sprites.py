@@ -129,7 +129,7 @@ class Mob(Sprite):
         self.vel = vec(0, 0)
 
         # movement speed
-        self.speed = 280     # adjust difficulty here
+        self.speed = PLAYER_SPEED
 
         self.rect.center = self.pos
 
@@ -219,6 +219,8 @@ class Player(Sprite):
         self.vel = vec(0,0)
         #the position of the sprite is (x,y) times tile size
         self.pos = vec(x,y) * TILESIZE
+        #self.speed is set to PLAYER_SPEED so that the player's speed is actually reflected onto the game
+        self.speed = PLAYER_SPEED
         self.hit_rect = PLAYER_HIT_RECT.copy()
         #self.jumping and self.moving are set to False
         self.jumping = False
@@ -273,13 +275,13 @@ class Player(Sprite):
             print('fired a projectile')
             p = Projectile(self.game, self.rect.x, self.rect.y)
         if keys[pg.K_a]:
-            self.vel.x = 2 * -PLAYER_SPEED
+            self.vel.x = 2 * -self.speed
         if keys[pg.K_d]:
-            self.vel.x = 2 * PLAYER_SPEED
+            self.vel.x = 2 * self.speed
         if keys[pg.K_w]:
-            self.vel.y = 2 * -PLAYER_SPEED
+            self.vel.y = 2 * -self.speed
         if keys[pg.K_s]:
-            self.vel.y = 2 * PLAYER_SPEED
+            self.vel.y = 2 * self.speed
 
         #velocity is multiplied by 0.7071
         if self.vel.x != 0 and self.vel.y != 0:
@@ -340,10 +342,18 @@ class Player(Sprite):
             if str(hits[0].__class__.__name__) == "Coin":
                 print("I gained a speed powerup")
                 self.game.pickup_snd.play()
+                #a coin makes you gain speed
+                self.speed += 10
+                print("The player's new speed is " + str(self.speed))
                 print("You gained speed")
             if str(hits[0].__class__.__name__) == "Wall":
                 print("i collided with a Wall")
                 self.game.crunch_snd.play()
+                self.speed -= 3.5
+                print("The player's new speed is " + str(self.speed))
+            if self.speed == 0:
+                self.game.gameover_snd.play()
+                pg.mixer.music.stop()
 
 #class Wall is being created
 class Wall(Sprite):
@@ -364,6 +374,7 @@ class Wall(Sprite):
         self.vel = vec(0,0)
         #the position is based on x, y, and tile size
         self.pos = vec(x,y) * TILESIZE
+        self.speed = PLAYER_SPEED
         self.rect.center = self.pos
     #function update is defined
     def update(self):
