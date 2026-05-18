@@ -374,6 +374,7 @@ class Wall(Sprite):
         self.vel = vec(0,0)
         #the position is based on x, y, and tile size
         self.pos = vec(x,y) * TILESIZE
+        #The AI Copilot was used
         self.speed = PLAYER_SPEED
         self.rect.center = self.pos
     #function update is defined
